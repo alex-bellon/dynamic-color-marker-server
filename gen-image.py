@@ -10,8 +10,8 @@ class picServer(BaseHTTPRequestHandler):
         
         query = urlparse(self.path).query
         if query:
+            print(query)
             q = dict(qc.split("=") for qc in query.split("&"))
-            print("here") 
             if "r" in q and "g" in q and "b" in q:
                 r, g, b = int(q["r"]), int(q["g"]), int(q["b"])
                 if r in range(0, 256) and g in range(0, 256) and b in range(0, 256):
@@ -22,7 +22,19 @@ class picServer(BaseHTTPRequestHandler):
                     self.end_headers()
 
                     self.wfile.write(loadImage(filename))
-                    return 
+                    return
+             if "start" in q and "end" in q:
+                # add value checks lol
+                start, end = tuple(q["start"]), tuple(q["end"])
+                filename = genGradient(start, end)
+                
+                self.send_response(200)
+                self.send_header("Content-type", "image/png")
+                self.end_headers()
+
+                self.wfile.write(loadImage(filename))
+                return
+                
         else:
             print("AAAA")
             self.send_response(200)
@@ -40,6 +52,15 @@ def genImage(r, g, b):
     filename = "{}_{}_{}.png".format(r, g, b)
     img.save(filename, "PNG")
     return filename
+
+def genGradient(start, end):
+    img = Image.new("RGBA", (500, 50))
+    draw = ImageDraw.Draw(img)
+    r_diff = (start[0] - end[0])
+    g_diff = (start[1] - end[1])
+    b_diff = (start[2] - end[2])
+
+    
 
 def loadImage(filename):
     with open(filename, "rb") as f:
