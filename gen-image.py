@@ -23,7 +23,7 @@ class picServer(BaseHTTPRequestHandler):
 
                     self.wfile.write(loadImage(filename))
                     return
-             if "start" in q and "end" in q:
+            if "start" in q and "end" in q:
                 # add value checks lol
                 start, end = tuple(q["start"]), tuple(q["end"])
                 filename = genGradient(start, end)
@@ -48,7 +48,7 @@ def genImage(r, g, b):
     color = (r, g, b)
     img = Image.new("RGBA", (30, 30))
     draw = ImageDraw.Draw(img)
-    draw.ellipse((10, 10, 20, 20), fill=color, outline=color)
+    draw.ellipse((13, 13, 17, 17), fill=color, outline=color)
     filename = "{}_{}_{}.png".format(r, g, b)
     img.save(filename, "PNG")
     return filename
